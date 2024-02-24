@@ -1,5 +1,6 @@
 
 import 'package:assignment0/blocs/weather_app_block.dart';
+import 'package:assignment0/screens/home_screen.dart';
 import 'package:assignment0/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen(),
+      // home: LoginScreen(),
+      home: HomeScreen(),
+
     );
   }
 }
