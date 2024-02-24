@@ -3,18 +3,25 @@ import 'package:flutter/material.dart';
 class CommonScaffold extends StatelessWidget {
   const CommonScaffold({
     super.key,
+    this.isWhiteBackground,
     required this.child,
     required this.gradientColorList,
   });
 
   final Widget child;
   final List<Color> gradientColorList;
+  final bool? isWhiteBackground;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: CommonGradient(
-          gradientColorList: gradientColorList,
+          gradientColorList: isWhiteBackground == true
+              ? [
+                  Colors.transparent,
+                  Colors.transparent,
+                ]
+              : gradientColorList,
           child: child,
         ),
       ),

@@ -9,10 +9,11 @@ class WeatherInfo extends StatelessWidget {
   const WeatherInfo({
     super.key,
     this.weatherResponse,
+    this.flag = Country.india,
   });
 
   final PlaceWeatherResponse? weatherResponse;
-
+  final Country flag;
   @override
   Widget build(BuildContext context) {
     if (weatherResponse == null) {
@@ -22,7 +23,7 @@ class WeatherInfo extends StatelessWidget {
     }
     return LocationWeatherInfo(
       data: weatherResponse,
-      flag: Country.india,
+      flag: flag,
     ).padSymmetric(horizontalPad: 12);
   }
 }
@@ -31,12 +32,12 @@ class LocationWeatherInfo extends StatelessWidget {
   const LocationWeatherInfo({
     super.key,
     this.data,
-    this.flag,
     this.isShowNoDataTile,
+    required this.flag,
   });
 
   final PlaceWeatherResponse? data;
-  final Country? flag;
+  final Country flag;
   final bool? isShowNoDataTile;
 
   @override
@@ -64,7 +65,7 @@ class LocationWeatherInfo extends StatelessWidget {
                     border: Border.all()),
                 child: ClipOval(
                   child: Image.asset(
-                    flag?.getAssetPath ?? Country.india.getAssetPath,
+                    flag.getAssetPath,
                     height: 50,
                     fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) {
@@ -155,5 +156,3 @@ class LabelInfo extends StatelessWidget {
     );
   }
 }
-
-
