@@ -15,9 +15,9 @@
 ###   GetX
 
 ```
-   *   no strong typing -> debugging is difficult
-   *   less testability
-   *   less scalability
+     *   no strong typing -> debugging is difficult
+     *   less testability
+     *   less scalability
 ```
 
 ```
