@@ -1,3 +1,0 @@
-class GoogleAuthHiveModel extends HiveObject{
-  
-}

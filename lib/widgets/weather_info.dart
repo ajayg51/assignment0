@@ -8,23 +8,36 @@ import 'package:flutter/material.dart';
 class WeatherInfo extends StatelessWidget {
   const WeatherInfo({
     super.key,
+    this.isDbDataAvailed,
     this.weatherResponse,
-    this.flag = Country.india,
+    this.weatherCondition,
+    this.temperature,
+    this.location,
+    this.country = Country.india,
   });
-
   final PlaceWeatherResponse? weatherResponse;
-  final Country flag;
+  final bool? isDbDataAvailed;
+  final String? weatherCondition;
+  final String? temperature;
+  final String? location;
+  final Country country;
   @override
   Widget build(BuildContext context) {
+    if (isDbDataAvailed == true) {
+      return LocationWeatherInfo(
+        weatherCondition: weatherCondition,
+        temperature: temperature,
+        location: location,
+        country: country,
+      );
+    }
     if (weatherResponse == null) {
       return const Center(
         child: Text("No data"),
       ).padSymmetric(horizontalPad: 12);
     }
-    return LocationWeatherInfo(
-      data: weatherResponse,
-      flag: flag,
-    ).padSymmetric(horizontalPad: 12);
+    return LocationWeatherInfo(data: weatherResponse, country: country)
+        .padSymmetric(horizontalPad: 12);
   }
 }
 
@@ -33,12 +46,18 @@ class LocationWeatherInfo extends StatelessWidget {
     super.key,
     this.data,
     this.isShowNoDataTile,
-    required this.flag,
+    this.weatherCondition,
+    this.temperature,
+    this.location,
+    required this.country,
   });
 
   final PlaceWeatherResponse? data;
-  final Country flag;
+  final Country country;
   final bool? isShowNoDataTile;
+  final String? weatherCondition;
+  final String? temperature;
+  final String? location;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +70,9 @@ class LocationWeatherInfo extends StatelessWidget {
     }
 
     final countryCode = data?.sys?.country ?? "err";
-    final double temperature = data?.main?.temp ?? 0;
+    final double apiTemperature = data?.main?.temp ?? 0;
+    final double dbTemperature = double.tryParse(temperature ?? "") ?? 0;
+    final countryAssetPath = country.getAssetPath;
 
     return BoilerPlateTile(
       child: Column(
@@ -64,14 +85,17 @@ class LocationWeatherInfo extends StatelessWidget {
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all()),
                 child: ClipOval(
-                  child: Image.asset(
-                    flag.getAssetPath,
-                    height: 50,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) {
-                      return Text("Code : $countryCode").padAll(value: 5);
-                    },
-                  ),
+                  child: countryAssetPath.isEmpty
+                      ? Text("Code : ${country.getISOCountryCodes}")
+                          .padAll(value: 5)
+                      : Image.asset(
+                          country.getAssetPath,
+                          height: 50,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) {
+                            return Text("Code : $countryCode").padAll(value: 5);
+                          },
+                        ),
                 ),
               ),
               12.horizontalSpace,
@@ -98,21 +122,31 @@ class LocationWeatherInfo extends StatelessWidget {
               children: [
                 LabelInfo(
                   label: "Weather condition : ",
-                  info: data != null && data!.weather.isNotEmpty
-                      ? data!.weather[0].description
-                      : "will update",
+                  info: data == null
+                      ? weatherCondition != null
+                          ? weatherCondition!
+                          : "will update"
+                      : data!.weather.isNotEmpty
+                          ? data!.weather[0].description
+                          : "will update",
                 ),
                 12.verticalSpace,
                 LabelInfo(
                   label: "Temperature : ",
-                  info: data != null
-                      ? "${temperature >= 273.16 ? (temperature - 273.16).toInt() : 0} \u2103"
-                      : "will update",
+                  info: data == null
+                      ? "${dbTemperature >= 273.16 ? (dbTemperature - 273.16).toInt() : 0} \u2103"
+                      : "${apiTemperature >= 273.16 ? (apiTemperature - 273.16).toInt() : 0} \u2103",
                 ),
                 12.verticalSpace,
                 LabelInfo(
                   label: "Location : ",
-                  info: data != null ? data!.name : "will update",
+                  info: data == null
+                      ? location != null
+                          ? location!
+                          : "Will update"
+                      : data != null
+                          ? data!.name
+                          : "will update",
                 ),
               ],
             ).padAll(value: 10),

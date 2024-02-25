@@ -5,6 +5,16 @@ abstract class LoginEvent extends Equatable {
   const LoginEvent();
 }
 
+class UserLoginStartupEvent extends LoginEvent {
+  final UserCredential? userCredential;
+
+  const UserLoginStartupEvent({this.userCredential});
+
+  @override
+  List<Object?> get props => [userCredential];
+}
+
+
 class UserLoginEvent extends LoginEvent {
   final UserCredential? userCredential;
 

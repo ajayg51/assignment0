@@ -17,6 +17,7 @@ import 'package:assignment0/utils/extensions.dart';
 import 'package:assignment0/utils/separator.dart';
 import 'package:assignment0/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchCityScreen extends StatelessWidget {
@@ -198,7 +199,11 @@ class _SearchCityBoxState extends State<SearchCityBox> {
                     flag: SelectFlagController.flag,
                     place: textController.text,
                   );
-                  Navigator.pop(context);
+                  SchedulerBinding.instance.addPostFrameCallback(
+                    (_) {
+                      Navigator.pop(context);
+                    },
+                  );
 
                   BlocProvider.of<SearchCityBloc>(context)
                       .add(const SearchCityEvent());
@@ -243,8 +248,11 @@ class BottomSheetContent extends StatelessWidget {
                           .add(const SelectFlagEvent());
 
                       SelectFlagController.selectCity(selectedFlag: flag);
-
-                      Navigator.pop(context);
+                      SchedulerBinding.instance.addPostFrameCallback(
+                        (_) {
+                          Navigator.pop(context);
+                        },
+                      );
                     },
                     child: Row(
                       children: [

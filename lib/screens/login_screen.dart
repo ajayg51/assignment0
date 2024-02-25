@@ -1,13 +1,16 @@
 import 'package:assignment0/blocs/login_bloc/login_bloc.dart';
 import 'package:assignment0/blocs/login_bloc/login_event.dart';
 import 'package:assignment0/blocs/login_bloc/login_state.dart';
+import 'package:assignment0/models/logged_in_user_info.dart';
 import 'package:assignment0/screens/home_screen.dart';
 import 'package:assignment0/utils/assets.dart';
 import 'package:assignment0/utils/color_consts.dart';
 import 'package:assignment0/utils/common_appbar.dart';
 import 'package:assignment0/utils/common_scaffold.dart';
 import 'package:assignment0/utils/extensions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,6 +21,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -52,15 +61,26 @@ class BuildContent extends StatefulWidget {
 }
 
 class _BuildContentState extends State<BuildContent> {
+  void navigateToHomeScreen() {
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is UserLoggedInState && state.userCredential != null) {
           // TODO:  Will use get_it for routing
-
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (ctx) => const HomeScreen()));
+          navigateToHomeScreen();
         }
       },
       builder: (context, state) {

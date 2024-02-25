@@ -1,12 +1,19 @@
+import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_state.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_event.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_state.dart';
 import 'package:assignment0/controllers/city_search_controller.dart';
+import 'package:assignment0/controllers/sqlite_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchCityBloc extends Bloc<CityEvent, CityState> {
   SearchCityBloc() : super(const CityInitialState()) {
     on<CityEvent>((event, emit) async {
+      if (event is SearchCityStartupEvent) {
+        final list = await SqliteController.getLocationItems();
+        emit(CityStartupState(locationInfo: list));
+      }
+
       if (event is SearchCityEvent) {
         emit(const CityLoadingState(isLoading: true));
 
@@ -29,12 +36,12 @@ class SearchCityBloc extends Bloc<CityEvent, CityState> {
         if (weatherResponse == null) {
           emit(const SearchCityWeatherEmptyState(msg: "data not found"));
         } else {
-          final flag = CitySearchController.countryFlag;
-          debugPrint("flag :: $flag");
-          
+          final country = CitySearchController.country;
+          debugPrint("flag :: $country");
+
           emit(SearchCityWeatherState(
             weatherResponse: weatherResponse,
-            flag: flag!,
+            country: country!,
           ));
         }
       }

@@ -80,3 +80,16 @@ extension FlagExt on String {
     }
   }
 }
+
+enum Location { curLoc, searchedLoc }
+
+extension LocationExt on Location {
+  String get getLabel {
+    switch (this) {
+      case Location.curLoc:
+        return "curLoc";
+      case Location.searchedLoc:
+        return "searchedLoc";
+    }
+  }
+}

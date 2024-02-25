@@ -3,8 +3,13 @@ import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_even
 import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_state.dart';
 import 'package:assignment0/blocs/login_bloc/login_bloc.dart';
 import 'package:assignment0/blocs/login_bloc/login_event.dart';
+import 'package:assignment0/blocs/login_bloc/login_state.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_bloc.dart';
+import 'package:assignment0/blocs/search_city_bloc/search_city_event.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_state.dart';
+import 'package:assignment0/controllers/sqlite_controller.dart';
+import 'package:assignment0/models/location_info.dart';
+import 'package:assignment0/models/logged_in_user_info.dart';
 import 'package:assignment0/models/place_weather_response.dart';
 import 'package:assignment0/screens/search_city_screen.dart';
 import 'package:assignment0/utils/assets.dart';
@@ -16,6 +21,7 @@ import 'package:assignment0/utils/extensions.dart';
 import 'package:assignment0/utils/separator.dart';
 import 'package:assignment0/widgets/weather_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,13 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
           24.verticalSpace,
-          buildBtnRow(context),
-          24.verticalSpace,
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const BuildLoggedInUserInfo(),
+                  24.verticalSpace,
+                  buildBtnRow(context),
+                  24.verticalSpace,
                   const BuildBlocConsumerContent(),
                   24.verticalSpace,
                   const Separator(),
@@ -68,11 +76,15 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => const SearchCityScreen(),
-                ),
+              SchedulerBinding.instance.addPostFrameCallback(
+                (_) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => const SearchCityScreen(),
+                    ),
+                  );
+                },
               );
             },
             child: Container(
@@ -81,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: const Text("Find different city weather info")
+                child: const Text("Get other city weather info")
                     .padAll(value: 12),
               ),
             ),
@@ -92,7 +104,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: InkWell(
             onTap: () {
               BlocProvider.of<LoginBloc>(context).add(const UserLogoutEvent());
-              Navigator.pop(context);
+              SchedulerBinding.instance.addPostFrameCallback(
+                (_) {
+                  Navigator.pop(context);
+                },
+              );
             },
             child: Container(
               decoration: BoxDecoration(
@@ -108,6 +124,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+class BuildLoggedInUserInfo extends StatefulWidget {
+  const BuildLoggedInUserInfo({super.key});
+
+  @override
+  State<BuildLoggedInUserInfo> createState() => _BuildLoggedInUserInfoState();
+}
+
+class _BuildLoggedInUserInfoState extends State<BuildLoggedInUserInfo> {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<LoginBloc>(context).add(const UserLoginStartupEvent());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (ctx, state) {},
+      builder: (ctx, state) {
+        if (state is UserLoggedInStartupState) {
+          final list = state.list;
+          if (list.isNotEmpty) {
+            return Text("userInfo : " + list[0].displayName.toString());
+          }
+        }
+        return Text("user info not found in db");
+      },
+    );
+  }
+}
+
 class SearchedPlaceWeatherInfo extends StatefulWidget {
   const SearchedPlaceWeatherInfo({super.key});
 
@@ -118,10 +165,53 @@ class SearchedPlaceWeatherInfo extends StatefulWidget {
 
 class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
   @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<SearchCityBloc>(context)
+        .add(const SearchCityStartupEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<SearchCityBloc, CityState>(
       listener: (ctx, state) {},
       builder: (ctx, state) {
+        if (state is CityStartupState) {
+          debugPrint("search city startup Event");
+          final locationInfo = state.locationInfo;
+          if (locationInfo.isNotEmpty) {
+            final String weatherCondition = locationInfo[0].weatherCondition;
+            final String temperature = locationInfo[0].temperature;
+            final String location = locationInfo[0].location;
+            final String countryCode = locationInfo[0].countryCode;
+            debugPrint(location);
+            final country = countryCode.getCountryEnumFromString;
+
+            return Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text("Weather Info :: $location $country")
+                      .padAll(value: 12),
+                ),
+                12.verticalSpace,
+                WeatherInfo(
+                  isDbDataAvailed: true,
+                  weatherCondition: weatherCondition,
+                  temperature: temperature,
+                  location: location,
+                  country: country,
+                ),
+              ],
+            );
+          }
+          return Text("Searced location info not found in db");
+        }
+
         if (state is CityLoadingState) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +229,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
         }
         if (state is SearchCityWeatherState) {
           debugPrint("hello");
-          debugPrint(state.flag.getCountryName);
+          debugPrint(state.country.getCountryName);
           final data = state.weatherResponse;
           final location = data?.name;
 
@@ -159,7 +249,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
               12.verticalSpace,
               WeatherInfo(
                 weatherResponse: data,
-                flag: state.flag,
+                country: state.country,
               ),
             ],
           );
@@ -179,6 +269,41 @@ class BuildBlocConsumerContent extends StatelessWidget {
     return BlocConsumer<LocationBloc, LocationState>(
       listener: (context, state) {},
       builder: (context, state) {
+        if (state is LocationStartupState) {
+          debugPrint("device location startup Event");
+          final locationInfo = state.locationInfo;
+          if (locationInfo.isNotEmpty) {
+            final String weatherCondition = locationInfo[0].weatherCondition;
+            final String temperature = locationInfo[0].temperature;
+            final String location = locationInfo[0].location;
+            final String countryCode = locationInfo[0].countryCode;
+            debugPrint(location);
+            final country = countryCode.getCountryEnumFromString;
+
+            return Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text("Weather Info :: $location $country")
+                      .padAll(value: 12),
+                ),
+                12.verticalSpace,
+                WeatherInfo(
+                  isDbDataAvailed: true,
+                  weatherCondition: weatherCondition,
+                  temperature: temperature,
+                  location: location,
+                  country: country,
+                ),
+              ],
+            );
+          }
+          return Text("Device location info not found in db");
+        }
+
         if (state is LocationLoadingState) {
           return const BuildLoadingState();
         } else if (state is LocationErrorState) {

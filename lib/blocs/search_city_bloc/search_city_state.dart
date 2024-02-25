@@ -1,9 +1,18 @@
+import 'package:assignment0/models/location_info.dart';
 import 'package:assignment0/models/place_weather_response.dart';
 import 'package:assignment0/utils/enums.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class CityState extends Equatable {
   const CityState();
+}
+
+class CityStartupState extends CityState {
+  final List<LocationInfo> locationInfo;
+  const CityStartupState({required this.locationInfo});
+
+  @override
+  List<Object> get props => [locationInfo];
 }
 
 class CityInitialState extends CityState {
@@ -42,16 +51,18 @@ class SearchCityState extends CityState {
 
 class SearchCityWeatherState extends CityState {
   final PlaceWeatherResponse? weatherResponse;
-  final Country flag;
+  final Country country;
 
-  
   const SearchCityWeatherState({
     this.weatherResponse,
-    this.flag = Country.india,
+    this.country = Country.india,
   });
 
   @override
-  List<Object?> get props => [weatherResponse];
+  List<Object?> get props => [
+        weatherResponse,
+        country,
+      ];
 }
 
 class SearchCityWeatherEmptyState extends CityState {

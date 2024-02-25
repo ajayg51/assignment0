@@ -1,3 +1,4 @@
+import 'package:assignment0/models/location_info.dart';
 import 'package:assignment0/models/place_weather_response.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,6 +14,14 @@ class LocationInitialState extends LocationState {
   List<Object> get props => [];
 }
 
+class LocationStartupState extends LocationState {
+  final List<LocationInfo> locationInfo;
+
+  const LocationStartupState({required this.locationInfo});
+
+  @override
+  List<Object> get props => [locationInfo];
+}
 
 class LocationLoadingState extends LocationState {
   final bool isLoading;
@@ -23,7 +32,6 @@ class LocationLoadingState extends LocationState {
   List<Object> get props => [isLoading];
 }
 
-
 class LocationErrorState extends LocationState {
   final String msg;
 
@@ -33,8 +41,6 @@ class LocationErrorState extends LocationState {
   List<Object> get props => [msg];
 }
 
-
-
 class DeviceLocationState extends LocationState {
   final Position? position;
 
@@ -43,8 +49,6 @@ class DeviceLocationState extends LocationState {
   @override
   List<Object?> get props => [position];
 }
-
-
 
 class WeatherDataState extends LocationState {
   final PlaceWeatherResponse? weatherResponse;
@@ -63,5 +67,3 @@ class WeatherDataEmptyState extends LocationState {
   @override
   List<Object> get props => [msg];
 }
-
-

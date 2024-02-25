@@ -1,3 +1,4 @@
+import 'package:assignment0/models/logged_in_user_info.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -28,6 +29,15 @@ class LoginErrorState extends LoginState {
 
   @override
   List<Object> get props => [msg];
+}
+
+class UserLoggedInStartupState extends LoginState {
+  final List<LoggedInUserInfo> list;
+
+  const UserLoggedInStartupState({required this.list});
+
+  @override
+  List<Object?> get props => [list];
 }
 
 class UserLoggedInState extends LoginState {
