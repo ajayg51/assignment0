@@ -1,5 +1,33 @@
 # assignment0 -- De Nada Assignment - Use BLoC State Management tool
 
+##   BLoC vs Getx
+
+###   BLoC
+
+```
+     *   strong typing thus easy to catch errors 
+     *   testability -> separation of business logic and presentation logic making it
+     *   easier to write unit tests for app
+     *   scalability -> scalable, suitable for all project sizes
+     *   community support
+```
+
+###   GetX
+
+```
+   *   no strong typing -> debugging is difficult
+   *   less testability
+   *   less scalability
+```
+
+```
+     *   strong typing thus easy to catch errors 
+     *   testability -> separation of business logic and presentation logic making it
+     *   easier to write unit tests for app
+     *   scalability -> scalable, suitable for all project sizes
+     *   community support
+```
+
 ##  Problem statement
 
 ![0](https://github.com/ajayg51/assignment0/assets/60037249/77c0a12d-3653-4540-a634-33c404a07947)
