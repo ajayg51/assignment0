@@ -1,8 +1,8 @@
 import 'package:assignment0/blocs/login_bloc/login_event.dart';
 import 'package:assignment0/blocs/login_bloc/login_state.dart';
-import 'package:assignment0/controllers/log_in_controller.dart';
 // import 'package:assignment0/controllers/sqlite_controller.dart';
 import 'package:assignment0/models/logged_in_user_info.dart';
+import 'package:assignment0/services/google_sign_in_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +15,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       // locator stuff
 
       final locator = GetIt.instance;
-      final loginController = locator.get<LogInController>();
+      final loginService = locator.get<GoogleAuthService>();
 
       // Hive stuff
 
@@ -39,20 +39,31 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (event is UserLoginEvent) {
         emit(const LoginLoadingState(isLoading: true));
 
+        String loginError = "";
         UserCredential? userCredential;
-        await loginController
-            .loginUser()
-            .then((value) => userCredential = value)
-            .onError((error, stackTrace) {
-          debugPrint("Login Error :: $error");
+        
+        await loginService.googleSignIn().then(
+          (value) {
+            debugPrint("login Bloc :: here $value");
+            userCredential = value;
+            loginError += userCredential.toString();
+          },
+        ).onError((error, stackTrace) {
+          debugPrint("Login bloc ::  Error :: $error");
 
-          emit(LoginErrorState(msg: error.toString()));
+          loginError += " :: $error :: $stackTrace";
+
+          emit(
+            LoginErrorState(
+              msg: error.toString() + " " + stackTrace.toString(),
+            ),
+          );
 
           return Future.error("Error $error");
         });
 
         if (userCredential != null) {
-          final loggedinUser = userCredential?.user;
+          final loggedinUser = userCredential!.user;
 
           if (loggedinUser != null) {
             final data = LoggedInUserInfo(
@@ -76,15 +87,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           }
 
           emit(UserLoggedInState(userCredential: userCredential));
+        } else {
+          emit(LoginErrorState(msg: "$loginError Something went wrong!"));
         }
-
-        // const LoadingState(isLoading: false);
       }
 
       if (event is UserLogoutEvent) {
         // TODO : add loaderstate
 
-        await loginController.logoutUser();
+        await loginService.signOut();
 
         final currentUser = FirebaseAuth.instance.currentUser;
 

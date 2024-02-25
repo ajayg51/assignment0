@@ -8,13 +8,7 @@ import 'package:assignment0/blocs/login_bloc/login_state.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_bloc.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_event.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_state.dart';
-import 'package:assignment0/controllers/log_in_controller.dart';
-import 'package:assignment0/db/sqflite.dart';
-import 'package:assignment0/models/location_info.dart';
-import 'package:assignment0/models/logged_in_user_info.dart';
 import 'package:assignment0/models/place_weather_response.dart';
-import 'package:assignment0/screens/login_screen.dart';
-import 'package:assignment0/screens/search_city_screen.dart';
 import 'package:assignment0/utils/assets.dart';
 import 'package:assignment0/utils/color_consts.dart';
 import 'package:assignment0/utils/common_appbar.dart';
@@ -67,12 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
-          24.verticalSpace,
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  12.verticalSpace,
                   const BuildLoggedInUserInfo(),
                   24.verticalSpace,
                   buildBtnRow(context),

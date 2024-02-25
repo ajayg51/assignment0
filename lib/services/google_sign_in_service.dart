@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthService {
-  UserCredential? userCredential;
-
   Future<UserCredential?> googleSignIn() async {
     debugPrint(" :: here 0");
 
@@ -22,14 +20,15 @@ class GoogleAuthService {
         idToken: googleSignInAuthentication?.idToken,
       );
 
-      var userCredential =
+      final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       debugPrint(userCredential.user.toString());
+      return userCredential;
     } catch (e) {
       debugPrint(" :: here 2 $e");
     }
-    return userCredential;
+    return null;
   }
 
   Future<void> signOut() async {

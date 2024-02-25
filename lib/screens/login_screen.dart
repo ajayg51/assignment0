@@ -144,19 +144,25 @@ class BuildLoginState extends StatelessWidget {
   final String msg;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          msg,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        12.horizontalSpace,
-        const CircularProgressIndicator(
-          color: Colors.black,
-        ),
-      ],
-    );
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            msg,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          12.horizontalSpace,
+          const CircularProgressIndicator(
+            color: Colors.black,
+          ),
+        ],
+      ).padAll(value: 12),
+    ).padSymmetric(horizontalPad: 12);
   }
 }
 
@@ -172,7 +178,7 @@ class BuildLoginErrorState extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          msg,
+          "Error :: $msg",
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ],
