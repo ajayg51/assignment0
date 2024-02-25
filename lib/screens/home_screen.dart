@@ -93,8 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child: const Text("Get other city weather info")
-                    .padAll(value: 12),
+                child:
+                    const Text("Get other city weather info").padAll(value: 12),
               ),
             ),
           ),
@@ -178,18 +178,26 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
       listener: (ctx, state) {},
       builder: (ctx, state) {
         if (state is CityStartupState) {
+          final list = state.locationInfo;
           debugPrint("search city startup Event");
-          final locationInfo = state.locationInfo;
-          if (locationInfo.isNotEmpty) {
-            final String weatherCondition = locationInfo[0].weatherCondition;
-            final String temperature = locationInfo[0].temperature;
-            final String location = locationInfo[0].location;
-            final String countryCode = locationInfo[0].countryCode;
+          debugPrint("search city startup data ");
+          for (var item in list) {
+            String countryCode = item.countryCode;
+            debugPrint(item.location);
+            debugPrint(countryCode);
+          }
+          if (list.isNotEmpty) {
+            final String weatherCondition = list[0].weatherCondition;
+            final String temperature = list[0].temperature;
+            final String location = list[0].location;
+            final String countryCode = list[0].countryCode;
             debugPrint(location);
             final country = countryCode.getCountryEnumFromString;
 
             return Column(
               children: [
+                Text("Last fetched weather info"),
+                12.verticalSpace,
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(),
@@ -282,6 +290,8 @@ class BuildBlocConsumerContent extends StatelessWidget {
 
             return Column(
               children: [
+                Text("Last fetched weather info"),
+                12.verticalSpace,
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(),

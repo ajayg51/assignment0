@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:assignment0/controllers/sqlite_controller.dart';
 import 'package:assignment0/models/location_info.dart';
 import 'package:assignment0/models/place_lat_longtd_response.dart';
 import 'package:assignment0/models/place_weather_response.dart';
@@ -133,6 +134,13 @@ class CitySearchController {
       //   Location.searchedLoc.getLabel,
       //   locationInfo,
       // );
+
+      final isDbInitialized = await SqliteController.dbInit();
+
+      if (isDbInitialized) {
+        await SqliteController.createLocationRecord(locationInfo);
+        debugPrint("saved search city info");
+      }
 
       weatherResponse = weatherData;
     }
