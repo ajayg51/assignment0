@@ -1,29 +1,28 @@
 import 'dart:async';
 
-import 'package:assignment0/controllers/sqlite_controller.dart';
 import 'package:assignment0/models/location_info.dart';
 import 'package:assignment0/models/place_lat_longtd_response.dart';
 import 'package:assignment0/models/place_weather_response.dart';
 import 'package:assignment0/utils/enums.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-// import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class CitySearchController {
-  static final dio = Dio();
-  static String searchedPlace = "";
-  static PlaceWeatherResponse? weatherResponse;
-  static Country? country;
 
-  // static Box<LocationInfo> locationBox = Hive.box('location');
+class SearchCityService {
+  final dio = Dio();
+  String searchedPlace = "";
+  PlaceWeatherResponse? weatherResponse;
+  Country? country;
 
-  static const latLongtdUrl = "https://api.openweathermap.org/geo/1.0/direct";
-  static const cityWeatherUrl =
-      "https://api.openweathermap.org/data/2.5/weather";
+  Box<LocationInfo> locationBox = Hive.box('location');
 
-  static const apiKey = "647ad5b09c950c3826811d25cc07baca";
+  String latLongtdUrl = "https://api.openweathermap.org/geo/1.0/direct";
+  String cityWeatherUrl = "https://api.openweathermap.org/data/2.5/weather";
 
-  static Future<PlaceWeatherResponse?> getPlaceWeatherBasisLatAndLong({
+  String apiKey = "647ad5b09c950c3826811d25cc07baca";
+
+  Future<PlaceWeatherResponse?> getPlaceWeatherBasisLatAndLong({
     required double lat,
     required double longtd,
   }) async {
@@ -52,7 +51,7 @@ class CitySearchController {
     return null;
   }
 
-  static void onSearchIconTap({
+  void onSearchIconTap({
     required Country flag,
     required String place,
   }) {
@@ -61,7 +60,7 @@ class CitySearchController {
     country = flag;
   }
 
-  static Future<void> getLocationInfoForSearchedPlace({
+  Future<void> getLocationInfoForSearchedPlace({
     required String place,
   }) async {
     // CustomDialog.showAlertDialog(
@@ -108,7 +107,7 @@ class CitySearchController {
     }
   }
 
-  static Future<void> getWeatherData({
+  Future<void> getWeatherData({
     bool? isFetchCurrentLocData,
     required double lat,
     required double longtd,
@@ -130,23 +129,27 @@ class CitySearchController {
         countryCode: countryCode,
       );
 
-      // await locationBox.put(
-      //   Location.searchedLoc.getLabel,
-      //   locationInfo,
-      // );
+      // hive working
 
-      final isDbInitialized = await SqliteController.dbInit();
+      await locationBox.put(
+        Location.searchedLoc.getLabel,
+        locationInfo,
+      );
 
-      if (isDbInitialized) {
-        await SqliteController.createLocationRecord(locationInfo);
-        debugPrint("saved search city info");
-      }
+// sqflite if hive not working.
+
+      // final isDbInitialized = await SqliteController.dbInit();
+
+      // if (isDbInitialized) {
+      //   await SqliteController.createLocationRecord(locationInfo);
+      //   debugPrint("saved search city info");
+      // }
 
       weatherResponse = weatherData;
     }
   }
 
-  static Future<PlaceLatLongtdResponse?> getLatLongtdForPlace({
+  Future<PlaceLatLongtdResponse?> getLatLongtdForPlace({
     required String place,
     required String countryCode,
   }) async {

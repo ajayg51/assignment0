@@ -1,12 +1,11 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_bloc.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_event.dart';
-import 'package:assignment0/blocs/search_city_bloc/search_city_state.dart';
 import 'package:assignment0/blocs/select_flag_bloc/flag_bloc.dart';
 import 'package:assignment0/blocs/select_flag_bloc/flag_bloc_event.dart';
 import 'package:assignment0/blocs/select_flag_bloc/flag_bloc_state.dart';
-import 'package:assignment0/controllers/city_search_controller.dart';
 import 'package:assignment0/controllers/select_flag_controller.dart';
-import 'package:assignment0/screens/home_screen.dart';
+import 'package:assignment0/services/search_city_service.dart';
 import 'package:assignment0/utils/assets.dart';
 import 'package:assignment0/utils/boiler_plate_tile.dart';
 import 'package:assignment0/utils/color_consts.dart';
@@ -15,11 +14,13 @@ import 'package:assignment0/utils/common_scaffold.dart';
 import 'package:assignment0/utils/enums.dart';
 import 'package:assignment0/utils/extensions.dart';
 import 'package:assignment0/utils/separator.dart';
-import 'package:assignment0/widgets/weather_info.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
+@RoutePage()
 class SearchCityScreen extends StatelessWidget {
   const SearchCityScreen({super.key});
 
@@ -85,9 +86,15 @@ class SelectFlag extends StatefulWidget {
 }
 
 class _SelectFlagState extends State<SelectFlag> {
+  late SelectFlagController selectFlagController;
+
   @override
   void initState() {
     super.initState();
+
+    final locator = GetIt.instance;
+    selectFlagController = locator.get<SelectFlagController>();
+
     BlocProvider.of<FlagBloc>(context).add(const SelectFlagEvent());
   }
 
@@ -109,7 +116,9 @@ class _SelectFlagState extends State<SelectFlag> {
               showModalBottomSheet(
                   context: context,
                   builder: (context) {
-                    return const BottomSheetContent();
+                    return BottomSheetContent(
+                      selectFlagController: selectFlagController,
+                    );
                   });
             },
             child: Container(
@@ -167,9 +176,20 @@ class SearchCityBox extends StatefulWidget {
 class _SearchCityBoxState extends State<SearchCityBox> {
   final textController = TextEditingController();
 
+  late SelectFlagController selectFlagController;
+  late SearchCityService searchCityService;
+
   @override
   void initState() {
     super.initState();
+
+    // GetIt stuff
+    final locator = GetIt.instance;
+    
+    selectFlagController = locator.get<SelectFlagController>();
+
+    searchCityService = locator.get<SearchCityService>();
+
     BlocProvider.of<SearchCityBloc>(context).add(const SearchCityEvent());
   }
 
@@ -195,13 +215,33 @@ class _SearchCityBoxState extends State<SearchCityBox> {
               6.horizontalSpace,
               InkWell(
                 onTap: () {
-                  CitySearchController.onSearchIconTap(
-                    flag: SelectFlagController.flag,
+                  searchCityService.onSearchIconTap(
+                    flag: selectFlagController.flag,
                     place: textController.text,
                   );
                   SchedulerBinding.instance.addPostFrameCallback(
                     (_) {
-                      Navigator.pop(context);
+                      if (textController.text.isNotEmpty) {
+                        SchedulerBinding.instance.addPostFrameCallback((_) {
+                          Flushbar(
+                            title: "Home screen",
+                            message: "Searched location weather info",
+                            duration: const Duration(seconds: 1),
+                          ).show(context);
+                        });
+
+                        context.router.back();
+                      } else {
+                        SchedulerBinding.instance.addPostFrameCallback((_) {
+                          Flushbar(
+                            title: "Location is missing",
+                            message: "Please input location first.",
+                            duration: const Duration(seconds: 1),
+                          ).show(context);
+                        });
+                      }
+
+                      // Navigator.pop(context);
                     },
                   );
 
@@ -224,7 +264,12 @@ class _SearchCityBoxState extends State<SearchCityBox> {
 }
 
 class BottomSheetContent extends StatelessWidget {
-  const BottomSheetContent({super.key});
+  BottomSheetContent({
+    super.key,
+    required this.selectFlagController,
+  });
+
+  SelectFlagController selectFlagController;
 
   @override
   Widget build(BuildContext context) {
@@ -247,9 +292,13 @@ class BottomSheetContent extends StatelessWidget {
                       BlocProvider.of<FlagBloc>(context)
                           .add(const SelectFlagEvent());
 
-                      SelectFlagController.selectCity(selectedFlag: flag);
+                      selectFlagController.selectCity(selectedFlag: flag);
                       SchedulerBinding.instance.addPostFrameCallback(
                         (_) {
+                          // takes back to previous route.
+
+                          // context.router.back();
+
                           Navigator.pop(context);
                         },
                       );
@@ -293,53 +342,3 @@ class BottomSheetContent extends StatelessWidget {
     );
   }
 }
-
-// class SearchedPlaceWeatherInfo extends StatefulWidget {
-//   const SearchedPlaceWeatherInfo({super.key});
-
-//   @override
-//   State<SearchedPlaceWeatherInfo> createState() =>
-//       _SearchedPlaceWeatherInfoState();
-// }
-
-// class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     BlocProvider.of<SearchCityBloc>(context).add(const SearchCityEvent());
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocConsumer<SearchCityBloc, CityState>(
-//       listener: (ctx, state) {},
-//       builder: (ctx, state) {
-//         if (state is CityLoadingState) {
-//           return Row(
-//             children: [
-//               const Text("Fetching data..."),
-//               12.horizontalSpace,
-//               const CircularProgressIndicator(
-//                 color: Colors.black,
-//               )
-//             ],
-//           );
-//         }
-//         if (state is SearchCityWeatherEmptyState) {
-//           return Text(state.msg);
-//         }
-//         if (state is SearchCityWeatherState) {
-//           debugPrint("hello");
-//           debugPrint(state.flag.getCountryName);
-
-//           return WeatherInfo(
-//             weatherResponse: state.weatherResponse,
-//             flag: state.flag,
-//           );
-//         }
-//         // return const Text("Searched Place :: init state");
-//         return const SizedBox.shrink();
-//       },
-//     );
-//   }
-// }

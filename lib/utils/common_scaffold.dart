@@ -18,8 +18,8 @@ class CommonScaffold extends StatelessWidget {
         body: CommonGradient(
           gradientColorList: isWhiteBackground == true
               ? [
-                  Colors.transparent,
-                  Colors.transparent,
+                  Colors.white,
+                  Colors.white,
                 ]
               : gradientColorList,
           child: child,

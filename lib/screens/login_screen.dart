@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:assignment0/blocs/login_bloc/login_bloc.dart';
 import 'package:assignment0/blocs/login_bloc/login_event.dart';
 import 'package:assignment0/blocs/login_bloc/login_state.dart';
@@ -8,11 +9,14 @@ import 'package:assignment0/utils/color_consts.dart';
 import 'package:assignment0/utils/common_appbar.dart';
 import 'package:assignment0/utils/common_scaffold.dart';
 import 'package:assignment0/utils/extensions.dart';
+import 'package:assignment0/utils/route_path.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+@RoutePage()
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -24,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    
   }
 
   @override
@@ -64,12 +67,19 @@ class _BuildContentState extends State<BuildContent> {
   void navigateToHomeScreen() {
     SchedulerBinding.instance.addPostFrameCallback(
       (_) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          ),
-        );
+        // Flushbar(
+        //   message: "Login successful!",
+        //   duration: const Duration(seconds: 1),
+        // ).show(context);
+
+        context.router.pushNamed(RouteEnums.home.getPath);
+
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const HomeScreen(),
+        //   ),
+        // );
       },
     );
   }
@@ -81,6 +91,13 @@ class _BuildContentState extends State<BuildContent> {
         if (state is UserLoggedInState && state.userCredential != null) {
           // TODO:  Will use get_it for routing
           navigateToHomeScreen();
+        } else {
+          // SchedulerBinding.instance.addPostFrameCallback((_) {
+          //   Flushbar(
+          //     message: "Please log in first.",
+          //     duration: const Duration(seconds: 1),
+          //   ).show(context);
+          // });
         }
       },
       builder: (context, state) {
@@ -93,6 +110,7 @@ class _BuildContentState extends State<BuildContent> {
         } else if (state is UserLoggedInState) {
           String content = "No content";
           content = state.userCredential.toString();
+          return const SizedBox.shrink();
           return BuildLogInSuccessState(content: content);
         }
         return InkWell(

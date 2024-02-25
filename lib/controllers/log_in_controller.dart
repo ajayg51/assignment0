@@ -1,38 +1,18 @@
+import 'package:assignment0/services/google_sign_in_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get_it/get_it.dart';
 
 class LogInController {
-  static UserCredential? userCredential;
+  UserCredential? userCredential;
 
-  static Future<UserCredential?> googleSignIn() async {
-    debugPrint(" :: here 0");
+  final locator = GetIt.instance;
 
-    final GoogleSignInAccount? googleSignInAccount =
-        await GoogleSignIn().signIn();
-
-    try {
-      final GoogleSignInAuthentication? googleSignInAuthentication =
-          await googleSignInAccount?.authentication;
-
-      debugPrint(" :: here 1");
-
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication?.accessToken,
-        idToken: googleSignInAuthentication?.idToken,
-      );
-
-      userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      debugPrint(userCredential?.user.toString());
-    } catch (e) {
-      debugPrint(" :: here 2 $e");
-    }
+  Future<UserCredential?> loginUser() async {
+    userCredential = await locator.get<GoogleAuthService>().googleSignIn();
     return userCredential;
   }
 
-  static Future<void> signOut() async {
-    await FirebaseAuth.instance.signOut();
+  Future<void> logoutUser() async{
+    await locator.get<GoogleAuthService>().signOut();
   }
 }

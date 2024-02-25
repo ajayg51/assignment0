@@ -1,14 +1,16 @@
-import 'package:assignment0/screens/home_screen.dart';
-import 'package:assignment0/screens/login_screen.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:assignment0/utils/assets.dart';
 import 'package:assignment0/utils/color_consts.dart';
 import 'package:assignment0/utils/common_appbar.dart';
 import 'package:assignment0/utils/common_scaffold.dart';
 import 'package:assignment0/utils/extensions.dart';
+import 'package:assignment0/utils/route_path.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+@RoutePage()
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -24,19 +26,23 @@ class _SplashScreenState extends State<SplashScreen> {
       SchedulerBinding.instance.addPostFrameCallback(
         (_) {
           if (FirebaseAuth.instance.currentUser != null) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (ctx) => const HomeScreen(),
-              ),
-            );
+            // SchedulerBinding.instance.addPostFrameCallback((_) {
+            //   Flushbar(
+            //     message: "Welcome back!",
+            //     duration: const Duration(seconds: 1),
+            //   ).show(context);
+            // });
+
+            context.router.replaceNamed(RouteEnums.home.getPath);
           } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (ctx) => const LoginScreen(),
-              ),
-            );
+            // SchedulerBinding.instance.addPostFrameCallback((_) {
+            //   Flushbar(
+            //     message: "Please log in.",
+            //     duration: const Duration(seconds: 1),
+            //   ).show(context);
+            // });
+
+            context.router.replaceNamed(RouteEnums.login.getPath);
           }
         },
       );

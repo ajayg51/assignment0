@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:assignment0/blocs/device_location_bloc/device_location_bloc.dart';
 import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_event.dart';
 import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_state.dart';
@@ -7,10 +8,12 @@ import 'package:assignment0/blocs/login_bloc/login_state.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_bloc.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_event.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_state.dart';
-import 'package:assignment0/controllers/sqlite_controller.dart';
+import 'package:assignment0/controllers/log_in_controller.dart';
+import 'package:assignment0/db/sqflite.dart';
 import 'package:assignment0/models/location_info.dart';
 import 'package:assignment0/models/logged_in_user_info.dart';
 import 'package:assignment0/models/place_weather_response.dart';
+import 'package:assignment0/screens/login_screen.dart';
 import 'package:assignment0/screens/search_city_screen.dart';
 import 'package:assignment0/utils/assets.dart';
 import 'package:assignment0/utils/color_consts.dart';
@@ -18,12 +21,17 @@ import 'package:assignment0/utils/common_appbar.dart';
 import 'package:assignment0/utils/common_scaffold.dart';
 import 'package:assignment0/utils/enums.dart';
 import 'package:assignment0/utils/extensions.dart';
+import 'package:assignment0/utils/route_path.dart';
 import 'package:assignment0/utils/separator.dart';
 import 'package:assignment0/widgets/weather_info.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
+@RoutePage()
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -32,10 +40,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late GetIt locator;
+  
   @override
   void initState() {
     super.initState();
+
+    // locator = GetIt.instance;
+    // final loginController = locator.get<LogInController>();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Flushbar(
+        title: "Weather info",
+        message: "Showing device location and searched location weather info",
+        duration: const Duration(seconds: 1),
+      ).show(context);
+    });
+
     BlocProvider.of<LocationBloc>(context).add(const DeviceLocationEvent());
+
+    BlocProvider.of<LocationBloc>(context)
+        .add(const DeviceLocationStartupEvent());
   }
 
   @override
@@ -60,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Separator(),
                   24.verticalSpace,
                   const SearchedPlaceWeatherInfo(),
+                  24.verticalSpace,
                 ],
               ),
             ),
@@ -78,12 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               SchedulerBinding.instance.addPostFrameCallback(
                 (_) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (ctx) => const SearchCityScreen(),
-                    ),
-                  );
+                  context.router.pushNamed(RouteEnums.searchCity.getPath);
+
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (ctx) => const SearchCityScreen(),
+                  //   ),
+                  // );
                 },
               );
             },
@@ -106,7 +134,26 @@ class _HomeScreenState extends State<HomeScreen> {
               BlocProvider.of<LoginBloc>(context).add(const UserLogoutEvent());
               SchedulerBinding.instance.addPostFrameCallback(
                 (_) {
-                  Navigator.pop(context);
+                  // Flushbar(
+                  //   title: "Logging you out",
+                  //   message: "You need to log in again",
+                  //   duration: const Duration(seconds: 1),
+                  // ).show(context);
+
+                  context.router.back();
+
+                  // Navigator.pop(context);
+
+                  if (FirebaseAuth.instance.currentUser == null) {
+                    context.router.pushNamed(RouteEnums.login.getPath);
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (ctx) => const LoginScreen(),
+                    //   ),
+                    // );
+                  }
                 },
               );
             },
@@ -213,7 +260,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
                   temperature: temperature,
                   location: location,
                   country: country,
-                ),
+                ).padSymmetric(horizontalPad: 12),
               ],
             );
           }
@@ -307,7 +354,7 @@ class BuildBlocConsumerContent extends StatelessWidget {
                   temperature: temperature,
                   location: location,
                   country: country,
-                ),
+                ).padSymmetric(horizontalPad: 12),
               ],
             );
           }
