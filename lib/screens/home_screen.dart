@@ -277,7 +277,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
               children: [
                 Text(
                   "Last fetched weather info",
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 12.verticalSpace,
                 Container(
@@ -286,7 +286,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    "Weather Info :: $location $country",
+                    "Weather Info :: $location ${country.getCountryName}",
                     style: Theme.of(context).textTheme.titleLarge,
                   ).padAll(value: 12),
                 ),
@@ -385,9 +385,15 @@ class BuildBlocConsumerContent extends StatelessWidget {
 
             return Column(
               children: [
-                Text(
-                  "Last fetched weather info",
-                  style: Theme.of(context).textTheme.titleLarge,
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    "Last fetched weather info",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ).padAll(value: 6),
                 ),
                 12.verticalSpace,
                 Container(
@@ -396,7 +402,7 @@ class BuildBlocConsumerContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    "Weather Info :: $location $country",
+                    "Weather Info :: $location ${country.getCountryName}",
                     style: Theme.of(context).textTheme.titleLarge,
                   ).padAll(value: 12),
                 ),
@@ -427,7 +433,7 @@ class BuildBlocConsumerContent extends StatelessWidget {
           final data = state.weatherResponse;
           final location = data?.name;
           String countryCode = data?.sys?.country ?? "";
-          final country = countryCode.getCountryEnumFromString.getCountryName;
+          final country = countryCode.getCountryEnumFromString;
 
           return Column(
             children: [
@@ -437,10 +443,10 @@ class BuildBlocConsumerContent extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "Weather Info  (device location) :: $location  $country",
+                  "Weather Info  (device location) :: $location  ${country.getCountryName}",
                   style: Theme.of(context).textTheme.titleLarge,
                 ).padAll(value: 12),
-              ),
+              ).padSymmetric(horizontalPad: 12),
               12.verticalSpace,
               BuildWeatherSuccessState(weatherResponse: data),
             ],
