@@ -115,8 +115,9 @@ class _AnimatedLogoState extends State<AnimatedLogo>
             height: sizeAnimation.value,
           ),
           12.verticalSpace,
-          const Text(
+          Text(
             "Weather App using BLoC",
+            style: Theme.of(context).textTheme.titleLarge,
           ),
         ],
       ),

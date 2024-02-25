@@ -119,11 +119,15 @@ class _BuildContentState extends State<BuildContent> {
           },
           child: Container(
             decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.3),
               border: Border.all(),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
-              child: Text("Click here to log in"),
+            child: Center(
+              child: Text(
+                "Click here to log in",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ).padAll(value: 12),
           ).padSymmetric(horizontalPad: 12),
         );
@@ -143,7 +147,10 @@ class BuildLoginState extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(msg),
+        Text(
+          msg,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         12.horizontalSpace,
         const CircularProgressIndicator(
           color: Colors.black,
@@ -164,7 +171,10 @@ class BuildLoginErrorState extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(msg),
+        Text(
+          msg,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
       ],
     );
   }
@@ -181,10 +191,7 @@ class BuildLogInSuccessState extends StatelessWidget {
     return Center(
       child: Text(
         content,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     ).padSymmetric(horizontalPad: 12);
   }

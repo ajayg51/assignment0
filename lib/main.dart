@@ -51,11 +51,10 @@ void main() async {
 }
 
 void initialSetup() {
-  
   registerControllers();
 
   registerServices();
-  
+
   final locator = GetIt.instance;
   locator.get<HiveController>().setupHive();
 }
@@ -72,8 +71,22 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routerConfig: appRouter.config(),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+          titleMedium: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          titleSmall: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }

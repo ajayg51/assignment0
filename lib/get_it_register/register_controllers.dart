@@ -7,7 +7,7 @@ import 'package:get_it/get_it.dart';
 
 void registerControllers() {
   // TODO : add dependencies
-  debugPrint("Setting up locator");
+  debugPrint("Registering controllers");
   
   final locator = GetIt.instance;
 

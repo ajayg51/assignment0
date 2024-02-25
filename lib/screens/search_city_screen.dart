@@ -114,6 +114,7 @@ class _SelectFlagState extends State<SelectFlag> {
           return InkWell(
             onTap: () {
               showModalBottomSheet(
+                  backgroundColor: Colors.white.withOpacity(0.7),
                   context: context,
                   builder: (context) {
                     return BottomSheetContent(
@@ -123,6 +124,7 @@ class _SelectFlagState extends State<SelectFlag> {
             },
             child: Container(
               decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
                 border: Border.all(),
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -148,11 +150,12 @@ class _SelectFlagState extends State<SelectFlag> {
                     size: 20,
                   ),
                   12.horizontalSpace,
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       "Please select country",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                 ],
@@ -160,7 +163,10 @@ class _SelectFlagState extends State<SelectFlag> {
             ),
           );
         }
-        return const Text("Select flag init state");
+        return Text(
+          "Select flag init state",
+          style: Theme.of(context).textTheme.titleMedium,
+        );
       },
     );
   }
@@ -185,7 +191,7 @@ class _SearchCityBoxState extends State<SearchCityBox> {
 
     // GetIt stuff
     final locator = GetIt.instance;
-    
+
     selectFlagController = locator.get<SelectFlagController>();
 
     searchCityService = locator.get<SearchCityService>();
@@ -250,9 +256,16 @@ class _SearchCityBoxState extends State<SearchCityBox> {
                   BlocProvider.of<SearchCityBloc>(context)
                       .add(const FetchCityWeatherEvent());
                 },
-                child: const Icon(
-                  Icons.search,
-                  size: 30,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    border: Border.all(),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.search,
+                    size: 30,
+                  ).padAll(value: 6),
                 ),
               ),
             ],
@@ -264,12 +277,12 @@ class _SearchCityBoxState extends State<SearchCityBox> {
 }
 
 class BottomSheetContent extends StatelessWidget {
-  BottomSheetContent({
+  const BottomSheetContent({
     super.key,
     required this.selectFlagController,
   });
 
-  SelectFlagController selectFlagController;
+  final SelectFlagController selectFlagController;
 
   @override
   Widget build(BuildContext context) {
@@ -324,6 +337,7 @@ class BottomSheetContent extends StatelessWidget {
                             flag.getCountryName,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
                       ],

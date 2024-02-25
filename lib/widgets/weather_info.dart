@@ -32,8 +32,11 @@ class WeatherInfo extends StatelessWidget {
       );
     }
     if (weatherResponse == null) {
-      return const Center(
-        child: Text("No data"),
+      return Center(
+        child: Text(
+          "No data",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ).padSymmetric(horizontalPad: 12);
     }
     return LocationWeatherInfo(data: weatherResponse, country: country)
@@ -62,9 +65,12 @@ class LocationWeatherInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isShowNoDataTile == true) {
-      return const BoilerPlateTile(
+      return BoilerPlateTile(
         child: Center(
-          child: Text("No data"),
+          child: Text(
+            "No data",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
       );
     }
@@ -86,24 +92,30 @@ class LocationWeatherInfo extends StatelessWidget {
                     border: Border.all()),
                 child: ClipOval(
                   child: countryAssetPath.isEmpty
-                      ? Text("Code : ${country.getISOCountryCodes}")
-                          .padAll(value: 5)
+                      ? Text(
+                          "Code : ${country.getISOCountryCodes}",
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ).padAll(value: 5)
                       : Image.asset(
                           country.getAssetPath,
                           height: 50,
                           fit: BoxFit.contain,
                           errorBuilder: (_, __, ___) {
-                            return Text("Code : $countryCode").padAll(value: 5);
+                            return Text(
+                              "Code : $countryCode",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ).padAll(value: 5);
                           },
                         ),
                 ),
               ),
               12.horizontalSpace,
-              const Expanded(
+              Expanded(
                 child: Text(
                   "Current weather details",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
             ],
@@ -176,6 +188,7 @@ class LabelInfo extends StatelessWidget {
             label,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
         12.horizontalSpace,
@@ -184,6 +197,7 @@ class LabelInfo extends StatelessWidget {
             info,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
       ],

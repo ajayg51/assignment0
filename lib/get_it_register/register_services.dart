@@ -8,7 +8,7 @@ final locator = GetIt.instance;
 
 void registerServices() {
   // TODO : add dependencies
-  debugPrint("Setting up services");
+  debugPrint("Registering services");
 
   locator.registerLazySingleton(
     () => GoogleAuthService(),

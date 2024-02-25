@@ -41,13 +41,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late GetIt locator;
-  
+
   @override
   void initState() {
     super.initState();
-
-    // locator = GetIt.instance;
-    // final loginController = locator.get<LogInController>();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Flushbar(
@@ -117,12 +114,15 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Container(
               decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
                 border: Border.all(),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                child:
-                    const Text("Get other city weather info").padAll(value: 12),
+                child: Text(
+                  "Get other city weather info",
+                  style: Theme.of(context).textTheme.titleSmall,
+                ).padAll(value: 12),
               ),
             ),
           ),
@@ -159,10 +159,15 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Container(
               decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
                 border: Border.all(),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(child: const Text("Log out").padAll(value: 12)),
+              child: Center(
+                  child: Text(
+                "Log out",
+                style: Theme.of(context).textTheme.titleSmall,
+              ).padAll(value: 12)),
             ),
           ),
         ),
@@ -193,10 +198,43 @@ class _BuildLoggedInUserInfoState extends State<BuildLoggedInUserInfo> {
         if (state is UserLoggedInStartupState) {
           final list = state.list;
           if (list.isNotEmpty) {
-            return Text("userInfo : " + list[0].displayName.toString());
+            final userInfo = list[0];
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(),
+                    ),
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(
+                        userInfo.photoUrl,
+                      ),
+                    ).padAll(value: 6),
+                  ),
+                  12.horizontalSpace,
+                  Text(
+                    "Hello ${userInfo.displayName}",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ).padSymmetric(
+                horizontalPad: 12,
+                verticalPad: 6,
+              ),
+            ).padSymmetric(horizontalPad: 12);
           }
         }
-        return Text("user info not found in db");
+        return Text(
+          "user info not found",
+          style: Theme.of(context).textTheme.titleMedium,
+        );
       },
     );
   }
@@ -243,15 +281,20 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
 
             return Column(
               children: [
-                Text("Last fetched weather info"),
+                Text(
+                  "Last fetched weather info",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 12.verticalSpace,
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text("Weather Info :: $location $country")
-                      .padAll(value: 12),
+                  child: Text(
+                    "Weather Info :: $location $country",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ).padAll(value: 12),
                 ),
                 12.verticalSpace,
                 WeatherInfo(
@@ -264,14 +307,20 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
               ],
             );
           }
-          return Text("Searced location info not found in db");
+          return Text(
+            "Searced location info not found",
+            style: Theme.of(context).textTheme.titleMedium,
+          );
         }
 
         if (state is CityLoadingState) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Fetching data..."),
+              Text(
+                "Fetching data...",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               12.horizontalSpace,
               const CircularProgressIndicator(
                 color: Colors.black,
@@ -280,7 +329,10 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
           );
         }
         if (state is SearchCityWeatherEmptyState) {
-          return Text(state.msg);
+          return Text(
+            state.msg,
+            style: Theme.of(context).textTheme.titleMedium,
+          );
         }
         if (state is SearchCityWeatherState) {
           debugPrint("hello");
@@ -298,8 +350,10 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
                   border: Border.all(),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text("Weather Info :: $location $country")
-                    .padAll(value: 12),
+                child: Text(
+                  "Weather Info :: $location $country",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ).padAll(value: 12),
               ),
               12.verticalSpace,
               WeatherInfo(
@@ -337,15 +391,20 @@ class BuildBlocConsumerContent extends StatelessWidget {
 
             return Column(
               children: [
-                Text("Last fetched weather info"),
+                Text(
+                  "Last fetched weather info",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
                 12.verticalSpace,
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text("Weather Info :: $location $country")
-                      .padAll(value: 12),
+                  child: Text(
+                    "Weather Info :: $location $country",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ).padAll(value: 12),
                 ),
                 12.verticalSpace,
                 WeatherInfo(
@@ -358,7 +417,10 @@ class BuildBlocConsumerContent extends StatelessWidget {
               ],
             );
           }
-          return Text("Device location info not found in db");
+          return Text(
+            "Device location info not found",
+            style: Theme.of(context).textTheme.titleLarge,
+          );
         }
 
         if (state is LocationLoadingState) {
@@ -381,15 +443,19 @@ class BuildBlocConsumerContent extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                        "Weather Info  (device location) :: $location  $country")
-                    .padAll(value: 12),
+                  "Weather Info  (device location) :: $location  $country",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ).padAll(value: 12),
               ),
               12.verticalSpace,
               BuildWeatherSuccessState(weatherResponse: data),
             ],
           );
         }
-        return Text("home screen : Init state :: $state ");
+        return Text(
+          "home screen : Init state :: $state ",
+          style: Theme.of(context).textTheme.titleMedium,
+        );
       },
     );
   }
@@ -402,7 +468,10 @@ class BuildLoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text("Fetching weather info"),
+        Text(
+          "Fetching weather info",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         12.verticalSpace,
         const CircularProgressIndicator(
           color: Colors.black,
@@ -421,7 +490,10 @@ class BuildErrorState extends StatelessWidget {
   final String msg;
   @override
   Widget build(BuildContext context) {
-    return Text(msg);
+    return Text(
+      msg,
+      style: Theme.of(context).textTheme.titleMedium,
+    );
   }
 }
 
@@ -434,7 +506,10 @@ class BuildEmptyState extends StatelessWidget {
   final String msg;
   @override
   Widget build(BuildContext context) {
-    return Text(msg);
+    return Text(
+      msg,
+      style: Theme.of(context).textTheme.titleMedium,
+    );
   }
 }
 
