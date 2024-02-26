@@ -10,6 +10,7 @@ import 'package:assignment0/utils/route_path.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
@@ -18,23 +19,29 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: CommonScaffold(
-          gradientColorList: ColorConsts.gradientColorList,
-          child: Column(
-            children: [
-              const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
-              24.verticalSpace,
-              const Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BuildContent(),
-                  ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) {
+        SystemNavigator.pop();
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: CommonScaffold(
+            gradientColorList: ColorConsts.gradientColorList,
+            child: Column(
+              children: [
+                const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
+                24.verticalSpace,
+                const Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BuildContent(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -51,6 +58,11 @@ class BuildContent extends StatefulWidget {
 
 class _BuildContentState extends State<BuildContent> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
@@ -64,7 +76,10 @@ class _BuildContentState extends State<BuildContent> {
             msg: "Trying to log you in",
           );
         } else if (state is LoginErrorState) {
-          return BuildLoginErrorState(msg: state.msg);
+          // debugPrint(state.msg)
+          SystemNavigator.pop();
+          return BuildLoginErrorState(msg: "Something went wrong!")
+              .padSymmetric(horizontalPad: 12);
         } else if (state is UserLoggedInState) {
           String content = "No content";
           content = state.userCredential.toString();
@@ -74,9 +89,7 @@ class _BuildContentState extends State<BuildContent> {
 
           return BuildLogInSuccessState(content: content);
         }
-        if (FirebaseAuth.instance.currentUser != null) {
-          return Text("Will handle it");
-        }
+
         return InkWell(
           onTap: () {
             BlocProvider.of<LoginBloc>(context).add(const UserLoginEvent());

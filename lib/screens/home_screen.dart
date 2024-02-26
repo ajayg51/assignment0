@@ -22,6 +22,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
@@ -30,32 +31,40 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(
-      gradientColorList: ColorConsts.gradientColorList,
-      child: Column(
-        children: [
-          const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  12.verticalSpace,
-                  const BuildLoggedInUserInfo(),
-                  24.verticalSpace,
-                  buildBtnRow(context),
-                  24.verticalSpace,
-                  const BuildDeviceLocationWeatherInfo(),
-                  24.verticalSpace,
-                  const Separator(),
-                  24.verticalSpace,
-                  const SearchedPlaceWeatherInfo(),
-                  24.verticalSpace,
-                ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) {
+        if (FirebaseAuth.instance.currentUser != null) {
+          SystemNavigator.pop();
+        }
+      },
+      child: CommonScaffold(
+        gradientColorList: ColorConsts.gradientColorList,
+        child: Column(
+          children: [
+            const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    12.verticalSpace,
+                    const BuildLoggedInUserInfo(),
+                    24.verticalSpace,
+                    buildBtnRow(context),
+                    24.verticalSpace,
+                    const BuildDeviceLocationWeatherInfo(),
+                    24.verticalSpace,
+                    const Separator(),
+                    24.verticalSpace,
+                    const SearchedPlaceWeatherInfo(),
+                    24.verticalSpace,
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -70,6 +79,7 @@ class HomeScreen extends StatelessWidget {
               context.router.pushNamed(RouteEnums.searchCity.getPath);
             },
             child: Container(
+              height: 90,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
                 border: Border.all(),
@@ -93,6 +103,7 @@ class HomeScreen extends StatelessWidget {
               );
             },
             child: Container(
+              height: 90,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.3),
                 border: Border.all(),
@@ -135,8 +146,9 @@ class _BuildLoggedInUserInfoState extends State<BuildLoggedInUserInfo> {
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (ctx, state) {
-        if (FirebaseAuth.instance.currentUser == null) {
-          context.router.popUntilRouteWithPath(RouteEnums.login.getPath);
+        if (state is UserLoggedOutState &&
+            FirebaseAuth.instance.currentUser == null) {
+          context.router.pushNamed(RouteEnums.login.getPath);
         }
       },
       builder: (ctx, state) {
@@ -152,16 +164,22 @@ class _BuildLoggedInUserInfoState extends State<BuildLoggedInUserInfo> {
               child: Row(
                 children: [
                   Container(
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(),
-                    ),
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all()),
+                    child: ClipOval(
+                      child: Image.network(
                         userInfo.photoUrl,
-                      ),
-                    ).padAll(value: 6),
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) {
+                          return Text(
+                            "NA",
+                            style: Theme.of(context).textTheme.titleSmall,
+                          );
+                        },
+                      ).padAll(value: 6),
+                    ),
                   ),
                   12.horizontalSpace,
                   Text(
@@ -251,7 +269,7 @@ class _BuildDeviceLocationWeatherInfoState
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "Weather Info4 :: $location ${country.getCountryName}",
+                  "Weather Info :: $location ${country.getCountryName}",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge,
@@ -272,7 +290,9 @@ class _BuildDeviceLocationWeatherInfoState
         if (state is LocationLoadingState) {
           return const BuildLoadingState();
         } else if (state is LocationErrorState) {
-          return BuildErrorState(msg: state.msg);
+          debugPrint(state.msg);
+          return BuildErrorState(msg: "Something went wrong")
+              .padSymmetric(horizontalPad: 12);
         } else if (state is WeatherDataEmptyState) {
           return BuildEmptyState(msg: state.msg);
         } else if (state is WeatherDataState) {
@@ -289,7 +309,7 @@ class _BuildDeviceLocationWeatherInfoState
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "Weather Info1  (device location) :: $location  ${country.getCountryName}",
+                  "Weather Info  (device location) :: $location  ${country.getCountryName}",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge,
@@ -381,7 +401,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
           for (int i = 0; i < list.length; i++) {
             // debugPrint("loc :: "+list[i].loc);
             // debugPrint("location :: "+list[i].location);
-            
+
             if (list[i].loc == LocationEnum.otherLoc.getLabel) {
               locationInfo = list[i];
               break;
@@ -418,7 +438,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "Weather Info2 :: $location ${country.getCountryName}",
+                  "Weather Info :: $location ${country.getCountryName}",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge,
@@ -474,7 +494,7 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "Weather Info3 :: $location $country",
+                  "Weather Info :: $location $country",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium,
