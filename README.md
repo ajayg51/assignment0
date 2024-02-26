@@ -1,7 +1,7 @@
 # assignment0 -- De Nada Assignment - Use BLoC State Management tool
 
 ## Installation
-<a href="">Click here to download apk</a>
+<a href="https://github.com/ajayg51/assignment0/blob/main/app-contents/github-apk/app-release.apk">Click here to download apk</a>
 
 ##  Demo video
 
