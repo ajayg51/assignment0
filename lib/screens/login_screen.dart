@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:assignment0/blocs/login_bloc/login_bloc.dart';
 import 'package:assignment0/blocs/login_bloc/login_event.dart';
 import 'package:assignment0/blocs/login_bloc/login_state.dart';
@@ -8,10 +9,11 @@ import 'package:assignment0/utils/common_scaffold.dart';
 import 'package:assignment0/utils/extensions.dart';
 import 'package:assignment0/utils/route_path.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 @RoutePage()
 class LoginScreen extends StatelessWidget {
@@ -91,8 +93,24 @@ class _BuildContentState extends State<BuildContent> {
         }
 
         return InkWell(
-          onTap: () {
-            BlocProvider.of<LoginBloc>(context).add(const UserLoginEvent());
+          onTap: () async {
+            final isNetOn = await InternetConnection().hasInternetAccess;
+            debugPrint("Login screen :: $isNetOn");
+            
+            if (isNetOn) {
+              if (context.mounted) {
+                BlocProvider.of<LoginBloc>(context).add(const UserLoginEvent());
+              }
+            } else {
+              debugPrint("Login screen :: else :: $isNetOn");
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                Flushbar(
+                  duration: const Duration(seconds: 1),
+                  title: "Net is off",
+                  message: "Please check net connectivity.",
+                ).show(context);
+              });
+            }
           },
           child: Container(
             decoration: BoxDecoration(

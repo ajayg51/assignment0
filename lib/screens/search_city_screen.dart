@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 @RoutePage()
 class SearchCityScreen extends StatelessWidget {
@@ -217,41 +218,50 @@ class _SearchCityBoxState extends State<SearchCityBox> {
           ),
           6.horizontalSpace,
           InkWell(
-            onTap: () {
-              searchCityService.onSearchIconTap(
-                flag: selectFlagController.flag,
-                place: textController.text,
-              );
-              SchedulerBinding.instance.addPostFrameCallback(
-                (_) {
-                  if (textController.text.isNotEmpty) {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
-                      Flushbar(
-                        title: "Home screen",
-                        message: "Searched location weather info",
-                        duration: const Duration(seconds: 1),
-                      ).show(context);
-                    });
-                    BlocProvider.of<SearchCityBloc>(context)
-                        .add(const SearchCityEvent());
+            onTap: () async {
+              final isNetOn = await InternetConnection().hasInternetAccess;
+              if (isNetOn) {
+                searchCityService.onSearchIconTap(
+                  flag: selectFlagController.flag,
+                  place: textController.text,
+                );
+                SchedulerBinding.instance.addPostFrameCallback(
+                  (_) {
+                    if (textController.text.isNotEmpty) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        Flushbar(
+                          title: "Home screen",
+                          message: "Searched location weather info",
+                          duration: const Duration(seconds: 1),
+                        ).show(context);
+                      });
+                      BlocProvider.of<SearchCityBloc>(context)
+                          .add(const SearchCityEvent());
 
-                    BlocProvider.of<SearchCityBloc>(context)
-                        .add(const FetchCityWeatherEvent());
+                      BlocProvider.of<SearchCityBloc>(context)
+                          .add(const FetchCityWeatherEvent());
 
-                    context.router.back();
-                  } else {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
-                      Flushbar(
-                        title: "Location is missing",
-                        message: "Please input location first.",
-                        duration: const Duration(seconds: 1),
-                      ).show(context);
-                    });
-                  }
-
-                  // Navigator.pop(context);
-                },
-              );
+                      context.router.back();
+                    } else {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        Flushbar(
+                          title: "Location is missing",
+                          message: "Please input location first.",
+                          duration: const Duration(seconds: 1),
+                        ).show(context);
+                      });
+                    }
+                  },
+                );
+              } else {
+                if (context.mounted) {
+                  Flushbar(
+                    duration: const Duration(seconds: 1),
+                    title: "Net is off",
+                    message: "Check internet connectivity",
+                  ).show(context);
+                }
+              }
             },
             child: Container(
               decoration: BoxDecoration(
