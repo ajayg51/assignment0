@@ -1,7 +1,7 @@
 # assignment0 -- De Nada Assignment - Use BLoC State Management tool
 
-#    An android/iOS app to get weather details of any place in [India, Nepal, Bhutan, Myanmar and Sri Lanka]
-#    Auto detects location, quits app on error and fetches device location weather info.
+##    An android/iOS app to get weather details of any place in [India, Nepal, Bhutan, Myanmar and Sri Lanka]
+##   Auto detects location, quits app on error and fetches device location weather info.
 
 
 
