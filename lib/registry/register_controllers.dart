@@ -1,4 +1,4 @@
-import 'package:assignment0/controllers/device_location_controller.dart';
+
 import 'package:assignment0/controllers/select_flag_controller.dart';
 import 'package:assignment0/db/hive.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +14,6 @@ void registerControllers() {
     () => HiveController(),
   );
 
-  locator.registerLazySingleton<DeviceLocationController>(
-    () => DeviceLocationController(),
-  );
 
   locator.registerLazySingleton<SelectFlagController>(
     () => SelectFlagController(),

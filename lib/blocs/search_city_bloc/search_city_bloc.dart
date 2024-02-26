@@ -28,10 +28,22 @@ class SearchCityBloc extends Bloc<CityEvent, CityState> {
         // }
 
         final hiveList = locationBox.values.toList().reversed.toList();
-        debugPrint("Location Bloc :: Hive");
+        
+        debugPrint("CitySearchStartUp Location Bloc :: Hive");
+
+        // final hiveKeyList = locationBox.keys.toList().reversed.toList();
+        // for (var item in hiveKeyList) {
+        //   debugPrint("CitySearchBlocKey :: $item");
+        // }
+
         for (var item in hiveList) {
-          debugPrint(item.location);
+          debugPrint("CitySearchBloc loc :: ${item.loc}");
+          debugPrint("CitySearchBloc weather :: ${item.weatherCondition}");
+          debugPrint("CitySearchBloc temp :: ${item.temperature}");
+          debugPrint("CitySearchBloc country :: ${item.countryCode}");
+          debugPrint("CitySearchBloc location :: ${item.location}");
         }
+
         emit(CityStartupState(locationInfo: hiveList));
       }
 
@@ -39,7 +51,7 @@ class SearchCityBloc extends Bloc<CityEvent, CityState> {
         emit(const CityLoadingState(isLoading: true));
 
         final city = searchCityService.searchedPlace;
-        debugPrint("bloc :: $city");
+        debugPrint("City bloc :: $city");
         emit(SearchCityState(city: searchCityService.searchedPlace));
 
         // const LoadingState(isLoading: false);

@@ -15,7 +15,7 @@ class FlagBloc extends Bloc<FlagEvent, FlagState> {
       
       if (event is SelectFlagEvent) {
         final flag = controller.flag;
-        debugPrint("bloc :: $flag");
+        debugPrint("flag bloc :: $flag");
 
         emit(SelectFlagState(flag: flag));
       }

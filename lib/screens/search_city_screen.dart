@@ -37,10 +37,9 @@ class SearchCityScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const FlagSelectAndSearchCityBox()
-                    .padSymmetric(horizontalPad: 12),
-                12.verticalSpace,
-                // const SearchedPlaceWeatherInfo(),
+                const FlagSelectAndSearchCityBox().padSymmetric(
+                  horizontalPad: 12,
+                ),
               ],
             ),
           ),
@@ -150,13 +149,11 @@ class _SelectFlagState extends State<SelectFlag> {
                     size: 20,
                   ),
                   12.horizontalSpace,
-                  Expanded(
-                    child: Text(
-                      "Please select country",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+                  Text(
+                    "Please select country",
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
               ).padAll(value: 10),
@@ -207,68 +204,66 @@ class _SearchCityBoxState extends State<SearchCityBox> {
         border: Border.all(),
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: textController,
-                  decoration:
-                      const InputDecoration(hintText: "Search city name"),
-                ).padSymmetric(horizontalPad: 12, verticalPad: 12),
-              ),
-              6.horizontalSpace,
-              InkWell(
-                onTap: () {
-                  searchCityService.onSearchIconTap(
-                    flag: selectFlagController.flag,
-                    place: textController.text,
-                  );
-                  SchedulerBinding.instance.addPostFrameCallback(
-                    (_) {
-                      if (textController.text.isNotEmpty) {
-                        SchedulerBinding.instance.addPostFrameCallback((_) {
-                          Flushbar(
-                            title: "Home screen",
-                            message: "Searched location weather info",
-                            duration: const Duration(seconds: 1),
-                          ).show(context);
-                        });
+          Expanded(
+            child: TextField(
+              controller: textController,
+              decoration: const InputDecoration(hintText: "Search city name"),
+            ).padSymmetric(
+              horizontalPad: 12,
+              verticalPad: 12,
+            ),
+          ),
+          6.horizontalSpace,
+          InkWell(
+            onTap: () {
+              searchCityService.onSearchIconTap(
+                flag: selectFlagController.flag,
+                place: textController.text,
+              );
+              SchedulerBinding.instance.addPostFrameCallback(
+                (_) {
+                  if (textController.text.isNotEmpty) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      Flushbar(
+                        title: "Home screen",
+                        message: "Searched location weather info",
+                        duration: const Duration(seconds: 1),
+                      ).show(context);
+                    });
+                    BlocProvider.of<SearchCityBloc>(context)
+                        .add(const SearchCityEvent());
 
-                        context.router.back();
-                      } else {
-                        SchedulerBinding.instance.addPostFrameCallback((_) {
-                          Flushbar(
-                            title: "Location is missing",
-                            message: "Please input location first.",
-                            duration: const Duration(seconds: 1),
-                          ).show(context);
-                        });
-                      }
+                    BlocProvider.of<SearchCityBloc>(context)
+                        .add(const FetchCityWeatherEvent());
 
-                      // Navigator.pop(context);
-                    },
-                  );
+                    context.router.back();
+                  } else {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      Flushbar(
+                        title: "Location is missing",
+                        message: "Please input location first.",
+                        duration: const Duration(seconds: 1),
+                      ).show(context);
+                    });
+                  }
 
-                  BlocProvider.of<SearchCityBloc>(context)
-                      .add(const SearchCityEvent());
-                  BlocProvider.of<SearchCityBloc>(context)
-                      .add(const FetchCityWeatherEvent());
+                  // Navigator.pop(context);
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    border: Border.all(),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.search,
-                    size: 30,
-                  ).padAll(value: 6),
-                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                border: Border.all(),
+                shape: BoxShape.circle,
               ),
-            ],
+              child: const Icon(
+                Icons.search,
+                size: 30,
+              ).padAll(value: 6),
+            ),
           ),
         ],
       ),
@@ -332,13 +327,11 @@ class BottomSheetContent extends StatelessWidget {
                           ).padAll(value: 10),
                         ),
                         12.horizontalSpace,
-                        Expanded(
-                          child: Text(
-                            flag.getCountryName,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
+                        Text(
+                          flag.getCountryName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
                     ),

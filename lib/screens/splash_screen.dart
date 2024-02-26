@@ -23,29 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      SchedulerBinding.instance.addPostFrameCallback(
-        (_) {
-          if (FirebaseAuth.instance.currentUser != null) {
-            // SchedulerBinding.instance.addPostFrameCallback((_) {
-            //   Flushbar(
-            //     message: "Welcome back!",
-            //     duration: const Duration(seconds: 1),
-            //   ).show(context);
-            // });
-
-            context.router.replaceNamed(RouteEnums.home.getPath);
-          } else {
-            // SchedulerBinding.instance.addPostFrameCallback((_) {
-            //   Flushbar(
-            //     message: "Please log in.",
-            //     duration: const Duration(seconds: 1),
-            //   ).show(context);
-            // });
-
-            context.router.replaceNamed(RouteEnums.login.getPath);
-          }
-        },
-      );
+      if (FirebaseAuth.instance.currentUser != null) {
+        context.router.replaceNamed(RouteEnums.home.getPath);
+      } else {
+        context.router.replaceNamed(RouteEnums.login.getPath);
+      }
     });
   }
 

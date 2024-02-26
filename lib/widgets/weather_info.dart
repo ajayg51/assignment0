@@ -110,13 +110,11 @@ class LocationWeatherInfo extends StatelessWidget {
                 ),
               ),
               12.horizontalSpace,
-              Expanded(
-                child: Text(
-                  "Current weather details",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+              Text(
+                "Current weather details",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ],
           ),
@@ -133,7 +131,7 @@ class LocationWeatherInfo extends StatelessWidget {
             child: Column(
               children: [
                 LabelInfo(
-                  label: "Weather condition : ",
+                  label: "Weather condition",
                   info: data == null
                       ? weatherCondition != null
                           ? weatherCondition!
@@ -144,14 +142,14 @@ class LocationWeatherInfo extends StatelessWidget {
                 ),
                 12.verticalSpace,
                 LabelInfo(
-                  label: "Temperature : ",
+                  label: "Temperature",
                   info: data == null
                       ? "${dbTemperature >= 273.16 ? (dbTemperature - 273.16).toInt() : 0} \u2103"
                       : "${apiTemperature >= 273.16 ? (apiTemperature - 273.16).toInt() : 0} \u2103",
                 ),
                 12.verticalSpace,
                 LabelInfo(
-                  label: "Location : ",
+                  label: "Location",
                   info: data == null
                       ? location != null
                           ? location!

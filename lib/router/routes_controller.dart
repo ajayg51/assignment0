@@ -2,6 +2,9 @@ import 'package:assignment0/router/routes_controller.gr.dart';
 import 'package:assignment0/utils/route_path.dart';
 import 'package:auto_route/auto_route.dart';
 
+// flutter pub run build_runner watch  - delete-conflicting-outputs
+// run it after any new route add
+
 @AutoRouterConfig()
 class AppRouter extends $AppRouter {
   @override

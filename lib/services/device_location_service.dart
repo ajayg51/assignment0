@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class DeviceLocationController {
-   Future<Position> getDeviceLocation() async {
+class DeviceLocationService {
+  Future<Position> getDeviceLocation() async {
     debugPrint("here 0");
     final isServiceEnabled = await Geolocator.isLocationServiceEnabled();
     debugPrint("here 1");

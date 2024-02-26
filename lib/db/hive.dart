@@ -10,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 
 class HiveController {
   void setupHive() async {
-    
     debugPrint("Hive setup");
 
     Directory directory = await getApplicationDocumentsDirectory();
@@ -18,7 +17,10 @@ class HiveController {
     Hive.registerAdapter<LoggedInUserInfo>(GoogleAuthHiveAdapter());
     Hive.registerAdapter<LocationInfo>(LocationHiveAdapter());
 
-    await Hive.initFlutter(directory.path + "app0");
+    // TODO : Important on every new variable addition in LocationInfo change db path
+    // for error not enough bytes available
+
+    await Hive.initFlutter(directory.path + "app2");
 
     await Hive.openBox<LoggedInUserInfo>("user");
     await Hive.openBox<LocationInfo>("location");

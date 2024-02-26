@@ -1,9 +1,6 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:assignment0/blocs/login_bloc/login_bloc.dart';
 import 'package:assignment0/blocs/login_bloc/login_event.dart';
 import 'package:assignment0/blocs/login_bloc/login_state.dart';
-import 'package:assignment0/models/logged_in_user_info.dart';
-import 'package:assignment0/screens/home_screen.dart';
 import 'package:assignment0/utils/assets.dart';
 import 'package:assignment0/utils/color_consts.dart';
 import 'package:assignment0/utils/common_appbar.dart';
@@ -13,22 +10,11 @@ import 'package:assignment0/utils/route_path.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,40 +50,12 @@ class BuildContent extends StatefulWidget {
 }
 
 class _BuildContentState extends State<BuildContent> {
-  void navigateToHomeScreen() {
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) {
-        // Flushbar(
-        //   message: "Login successful!",
-        //   duration: const Duration(seconds: 1),
-        // ).show(context);
-
-        context.router.pushNamed(RouteEnums.home.getPath);
-
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const HomeScreen(),
-        //   ),
-        // );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is UserLoggedInState && state.userCredential != null) {
-          // TODO:  Will use get_it for routing
-          navigateToHomeScreen();
-        } else {
-          // SchedulerBinding.instance.addPostFrameCallback((_) {
-          //   Flushbar(
-          //     message: "Please log in first.",
-          //     duration: const Duration(seconds: 1),
-          //   ).show(context);
-          // });
+          context.router.pushNamed(RouteEnums.home.getPath);
         }
       },
       builder: (context, state) {
@@ -111,7 +69,13 @@ class _BuildContentState extends State<BuildContent> {
           String content = "No content";
           content = state.userCredential.toString();
           return const SizedBox.shrink();
+
+          // TODO : for debug on screen
+
           return BuildLogInSuccessState(content: content);
+        }
+        if (FirebaseAuth.instance.currentUser != null) {
+          return Text("Will handle it");
         }
         return InkWell(
           onTap: () {

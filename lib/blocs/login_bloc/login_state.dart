@@ -50,6 +50,7 @@ class UserLoggedInState extends LoginState {
 }
 
 class UserLoggedOutState extends LoginState {
+  
   const UserLoggedOutState();
 
   @override

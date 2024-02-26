@@ -1,9 +1,7 @@
 import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_event.dart';
 import 'package:assignment0/blocs/device_location_bloc/device_location_bloc_state.dart';
-
-import 'package:assignment0/controllers/device_location_controller.dart';
-// import 'package:assignment0/controllers/sqlite_controller.dart';
 import 'package:assignment0/models/location_info.dart';
+import 'package:assignment0/services/device_location_service.dart';
 import 'package:assignment0/services/search_city_service.dart';
 import 'package:assignment0/utils/enums.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +15,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     on<LocationEvent>((event, emit) async {
       // get it stuff
       final locator = GetIt.instance;
-      final deviceLocationController = locator.get<DeviceLocationController>();
+      final deviceLocationService = locator.get<DeviceLocationService>();
       final searchCityService = locator.get<SearchCityService>();
 
       // hive stuff
@@ -31,9 +29,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         // final list = await SqliteController.getLocationItems();
 
         final hiveList = locationBox.values.toList().reversed.toList();
-        debugPrint("Location Bloc :: Hive");
+        debugPrint("DeviceLocationStartup Location Bloc :: Hive");
         for (var item in hiveList) {
-          debugPrint(item.location);
+          debugPrint("${item.loc} ${item.location}");
         }
         if (hiveList.isEmpty) {
           emit(
@@ -47,7 +45,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
         Position? position;
 
-        await deviceLocationController.getDeviceLocation().then((value) {
+        await deviceLocationService.getDeviceLocation().then((value) {
           debugPrint("All is well.");
           position = value;
         }).onError((error, stackTrace) {
@@ -75,6 +73,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
           if (weatherResponse != null) {
             final locationInfo = LocationInfo(
+              loc: LocationEnum.curLoc.getLabel,
               weatherCondition: weatherResponse.weather[0].description,
               temperature: weatherResponse.main?.temp.toString() ?? "",
               location: weatherResponse.name,
@@ -82,7 +81,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
             );
 
             await locationBox.put(
-              Location.curLoc.getLabel,
+              LocationEnum.curLoc.getLabel,
               locationInfo,
             );
 

@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-
 class SearchCityService {
   final dio = Dio();
   String searchedPlace = "";
@@ -63,11 +62,6 @@ class SearchCityService {
   Future<void> getLocationInfoForSearchedPlace({
     required String place,
   }) async {
-    // CustomDialog.showAlertDialog(
-    //   context: context,
-    //   msg: "Fetching data...",
-    // );
-
     final latLongtdData = await getLatLongtdForPlace(
       place: place,
       countryCode: country!.getISOCountryCodes,
@@ -82,28 +76,6 @@ class SearchCityService {
         lat: lat,
         longtd: longtd,
       );
-
-      // if (context.mounted) {
-      //   Future.delayed(const Duration(seconds: 1));
-      //   Navigator.pop(context);
-      //   CustomDialog.showAlertDialog(
-      //     context: context,
-      //     msg: "Success",
-      //   );
-      // }
-    } else {
-      // if (context.mounted) {
-      //   Future.delayed(const Duration(seconds: 1));
-      //   Navigator.pop(context);
-      //   CustomDialog.showAlertDialog(
-      //     context: context,
-      //     msg: "Failure!",
-      //   );
-      // }
-      // Future.delayed(const Duration(seconds: 1));
-      // if (context.mounted) {
-      //   Navigator.pop(context);
-      // }
     }
   }
 
@@ -123,16 +95,25 @@ class SearchCityService {
       country = countryCode.getCountryEnumFromString;
 
       final locationInfo = LocationInfo(
+        loc: LocationEnum.otherLoc.getLabel,
         weatherCondition: weatherData.weather[0].description,
         temperature: weatherData.main?.temp.toString() ?? "",
         location: weatherData.name,
         countryCode: countryCode,
       );
 
+      debugPrint("CitySearchService loc :: ${locationInfo.loc}");
+      debugPrint("CitySearchService  weather :: ${locationInfo.weatherCondition}");
+      debugPrint("CitySearchService temperature :: ${locationInfo.temperature}");
+      debugPrint("CitySearchService country code :: ${locationInfo.countryCode}");
+      debugPrint("CitySearchService location :: ${locationInfo.location}");
+
       // hive working
 
+// TODO : check empty data writes
+
       await locationBox.put(
-        Location.searchedLoc.getLabel,
+        LocationEnum.otherLoc.getLabel,
         locationInfo,
       );
 

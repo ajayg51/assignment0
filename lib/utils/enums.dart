@@ -81,14 +81,14 @@ extension FlagExt on String {
   }
 }
 
-enum Location { curLoc, searchedLoc }
+enum LocationEnum { curLoc, otherLoc }
 
-extension LocationExt on Location {
+extension LocationEnumExt on LocationEnum {
   String get getLabel {
     switch (this) {
-      case Location.curLoc:
+      case LocationEnum.curLoc:
         return "curLoc";
-      case Location.searchedLoc:
+      case LocationEnum.otherLoc:
         return "searchedLoc";
     }
   }

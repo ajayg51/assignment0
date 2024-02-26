@@ -1,4 +1,4 @@
-
+import 'package:assignment0/services/device_location_service.dart';
 import 'package:assignment0/services/google_sign_in_service.dart';
 import 'package:assignment0/services/search_city_service.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,10 @@ void registerServices() {
 
   locator.registerLazySingleton(
     () => GoogleAuthService(),
+  );
+
+  locator.registerLazySingleton<DeviceLocationService>(
+    () => DeviceLocationService(),
   );
 
   locator.registerLazySingleton<SearchCityService>(
