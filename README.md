@@ -82,7 +82,7 @@ https://github.com/ajayg51/assignment0/assets/60037249/b103e6dc-4bec-404f-aa95-3
 
     In case of any network error shows the last weather info from the local db. 
 
-    7. Fetches user specific location weather data
+    7. Fetches searched location weather data
 
 ```
 
