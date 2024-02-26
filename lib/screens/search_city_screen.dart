@@ -27,24 +27,32 @@ class SearchCityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(
-      gradientColorList: ColorConsts.gradientColorList,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
-          24.verticalSpace,
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const FlagSelectAndSearchCityBox().padSymmetric(
-                  horizontalPad: 12,
-                ),
-              ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) {
+        BlocProvider.of<SearchCityBloc>(context)
+            .add(const SearchCityStartupEvent());
+        context.router.back();
+      },
+      child: CommonScaffold(
+        gradientColorList: ColorConsts.gradientColorList,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CommonAppbar(bannerAssetPath: Assets.weatherBanner),
+            24.verticalSpace,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const FlagSelectAndSearchCityBox().padSymmetric(
+                    horizontalPad: 12,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

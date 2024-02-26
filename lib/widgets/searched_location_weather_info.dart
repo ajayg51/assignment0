@@ -1,4 +1,3 @@
-
 import 'package:assignment0/blocs/search_city_bloc/search_city_bloc.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_event.dart';
 import 'package:assignment0/blocs/search_city_bloc/search_city_state.dart';
@@ -148,8 +147,8 @@ class _SearchedPlaceWeatherInfoState extends State<SearchedPlaceWeatherInfo> {
             ],
           );
         }
-        // return const Text("Searched Place :: init state");
-        return const SizedBox.shrink();
+        return const Text("Searched Place :: init state");
+        // return const SizedBox.shrink();
       },
     );
   }
