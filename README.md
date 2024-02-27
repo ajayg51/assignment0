@@ -8,8 +8,13 @@
 ```
  
 
+# bug
+```
+
+  $ App sometimes logs out by itself after choosing different location city and fetching weather info for it.
 
 
+```
 
 ## Installation
 <a href="https://github.com/ajayg51/assignment0/raw/main/app-contents/github-apk/app-release.apk">Click here to download apk</a>
