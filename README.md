@@ -47,13 +47,6 @@ https://github.com/ajayg51/assignment0/assets/60037249/b103e6dc-4bec-404f-aa95-3
      *   less scalability
 ```
 
-```
-     *   strong typing thus easy to catch errors 
-     *   testability -> separation of business logic and presentation logic making it
-     *   easier to write unit tests for app
-     *   scalability -> scalable, suitable for all project sizes
-     *   community support
-```
 
 ##  Problem statement 26 Feb 2024
 
