@@ -1,4 +1,4 @@
-# assignment0 -- De Nada Assignment - Use BLoC State Management tool
+# WeatherApp -- De Nada Assignment - Use BLoC State Management tool
 
 ```
 
