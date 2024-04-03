@@ -8,7 +8,7 @@
 ```
  
 
-# bug
+# Known issue
 ```
 
   $ App sometimes logs out by itself after choosing different location city and fetching weather info for it.
